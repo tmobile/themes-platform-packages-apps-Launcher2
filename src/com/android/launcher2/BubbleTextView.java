@@ -16,16 +16,18 @@
 
 package com.android.launcher2;
 
-import android.widget.TextView;
+import com.android.launcher.R;
+import com.tmobile.common.utils.ThemeUtilities;
+
 import android.content.Context;
-import android.util.AttributeSet;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.text.Layout;
-
-import com.android.launcher.R;
+import android.util.AttributeSet;
+import android.widget.TextView;
 
 /**
  * TextView that draws a bubble behind the text. We cannot use a LineBackgroundSpan
@@ -48,22 +50,30 @@ public class BubbleTextView extends TextView {
 
     public BubbleTextView(Context context) {
         super(context);
-        init();
+        init(context);
     }
 
     public BubbleTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context);
     }
 
     public BubbleTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(context);
     }
 
-    private void init() {
+    private void init(Context context) {
         setFocusable(true);
-        mBackground = getBackground();
+
+        int backgroundAttrId = ThemeUtilities.resolveDefaultStyleAttr(context, "com_android_launcher_workspaceIconBackground", 0);
+        if (backgroundAttrId != 0) {
+            TypedArray a = context.obtainStyledAttributes(new int[] { backgroundAttrId });
+            mBackground = a.getDrawable(0);
+            a.recycle();
+        } else {
+            mBackground = context.getResources().getDrawable(R.drawable.shortcut_selector);
+        }
         setBackgroundDrawable(null);
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
