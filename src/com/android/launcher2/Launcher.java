@@ -85,6 +85,7 @@ import java.io.IOException;
 import java.io.DataInputStream;
 
 import com.android.launcher.R;
+import com.tmobile.themehelper.ThemeUtilities;
 
 /**
  * Default launcher application.
@@ -373,12 +374,26 @@ public final class Launcher extends Activity
         return Uri.parse(url);
     }
 
+    private static Drawable getThemedDrawable(Context context, String attrName) {
+        int attrId = ThemeUtilities.resolveDefaultStyleAttr(context, attrName, 0);
+        if (attrId != 0) {
+            TypedArray a = context.obtainStyledAttributes(new int[] { attrId });
+            try {
+                return a.getDrawable(0);
+            } finally {
+                a.recycle();
+            }
+        }
+        return null;
+    }
+
     // Load the Intent templates from arrays.xml to populate the hotseats. For
     // each Intent, if it resolves to a single app, use that as the launch
     // intent & use that app's label as the contentDescription. Otherwise,
     // retain the ResolveActivity so the user can pick an app.
     private void loadHotseats() {
         if (mHotseatConfig == null) {
+            Context context = Launcher.this;
             mHotseatConfig = getResources().getStringArray(R.array.hotseats);
             if (mHotseatConfig.length > 0) {
                 mHotseats = new Intent[mHotseatConfig.length];
@@ -390,11 +405,16 @@ public final class Launcher extends Activity
                 mHotseatLabels = null;
             }
 
+            String[] themeAttrs = getResources().getStringArray(R.array.hotseat_themeAttrs);
             TypedArray hotseatIconDrawables = getResources().obtainTypedArray(R.array.hotseat_icons);
             for (int i=0; i<mHotseatConfig.length; i++) {
                 // load icon for this slot; currently unrelated to the actual activity
                 try {
-                    mHotseatIcons[i] = hotseatIconDrawables.getDrawable(i);
+                    Drawable hotseatIcon = getThemedDrawable(context, themeAttrs[i]);
+                    if (hotseatIcon == null) {
+                        hotseatIcon = hotseatIconDrawables.getDrawable(i);
+                    }
+                    mHotseatIcons[i] = hotseatIcon;
                 } catch (ArrayIndexOutOfBoundsException ex) {
                     Log.w(TAG, "Missing hotseat_icons array item #" + i);
                     mHotseatIcons[i] = null;
@@ -716,6 +736,11 @@ public final class Launcher extends Activity
         mDeleteZone = deleteZone;
 
         mHandleView = (HandleView) findViewById(R.id.all_apps_button);
+        Drawable allAppsFromTheme = getThemedDrawable(this, "com_android_launcher_hotseatButtonAllApps");
+        System.out.println("allAppsFromTheme=" + allAppsFromTheme);
+        if (allAppsFromTheme != null) {
+            mHandleView.setImageDrawable(allAppsFromTheme);
+        }
         mHandleView.setLauncher(this);
         mHandleView.setOnClickListener(this);
         mHandleView.setOnLongClickListener(this);
