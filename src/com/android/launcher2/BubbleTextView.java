@@ -17,7 +17,7 @@
 package com.android.launcher2;
 
 import com.android.launcher.R;
-import com.tmobile.common.utils.ThemeUtilities;
+import com.tmobile.themehelper.ThemeUtilities;
 
 import android.content.Context;
 import android.content.res.TypedArray;
