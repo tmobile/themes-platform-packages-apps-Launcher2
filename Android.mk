@@ -19,7 +19,8 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE_TAGS := optional
 
-LOCAL_STATIC_JAVA_LIBRARIES := android-common
+LOCAL_STATIC_JAVA_LIBRARIES := android-common \
+          com.tmobile.common
 
 LOCAL_SRC_FILES := $(call all-subdir-java-files)
 
