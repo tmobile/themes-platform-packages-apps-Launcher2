@@ -19,7 +19,6 @@
 -->
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:pluto="http://www.w3.org/2001/pluto.html"
     package="com.android.launcher"
     android:sharedUserId="@string/sharedUserId"
     >
@@ -67,8 +66,7 @@
         android:name="com.android.launcher2.LauncherApplication"
         android:process="@string/process"
         android:label="@string/application_name"
-        android:icon="@drawable/ic_launcher_home"
-        pluto:isThemeable="true">
+        android:icon="@drawable/ic_launcher_home">
 
         <activity
             android:name="com.android.launcher2.Launcher"

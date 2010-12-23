@@ -38,13 +38,9 @@ import android.text.TextPaint;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.content.Context;
 
 import com.android.launcher.R;
-import java.util.Arrays;
-
-import com.tmobile.themehelper.ThemeUtilities;
 
 /**
  * Various utilities shared amongst the Launcher's classes.
@@ -67,9 +63,6 @@ final class Utilities {
     private static final Rect sBounds = new Rect();
     private static final Rect sOldBounds = new Rect();
     private static final Canvas sCanvas = new Canvas();
-
-    private static final String ATTR_GLOW_COLOR_PRESSED = "com_android_launcher_apps3DGlowColorPressed";
-    private static final String ATTR_GLOW_COLOR_FOCUSED = "com_android_launcher_apps3DGlowColorFocused";
 
     static {
         sCanvas.setDrawFilter(new PaintFlagsDrawFilter(Paint.DITHER_FLAG,
@@ -249,44 +242,15 @@ final class Utilities {
         sIconTextureWidth = sIconTextureHeight = sIconWidth + 2;
 
         sBlurPaint.setMaskFilter(new BlurMaskFilter(5 * density, BlurMaskFilter.Blur.NORMAL));
+        sGlowColorPressedPaint.setColor(0xffffc300);
         sGlowColorPressedPaint.setMaskFilter(TableMaskFilter.CreateClipTable(0, 30));
+        sGlowColorFocusedPaint.setColor(0xffff8e00);
         sGlowColorFocusedPaint.setMaskFilter(TableMaskFilter.CreateClipTable(0, 30));
-        initGlowColors(context);
 
         ColorMatrix cm = new ColorMatrix();
         cm.setSaturation(0.2f);
         sDisabledPaint.setColorFilter(new ColorMatrixColorFilter(cm));
         sDisabledPaint.setAlpha(0x88);
-    }
-
-    private static void initGlowColors(Context context) {
-        int glowColorPressedAttrId = ThemeUtilities.resolveDefaultStyleAttr(context, 
-                ATTR_GLOW_COLOR_PRESSED, 0);
-        int glowColorFocusedAttrId = ThemeUtilities.resolveDefaultStyleAttr(context, 
-                ATTR_GLOW_COLOR_FOCUSED, 0);
-
-        int pressedColor = 0xffffc300;
-        int focusedColor = 0xffff8e00;
-
-        if (glowColorPressedAttrId != 0 && glowColorFocusedAttrId != 0) {
-            int[] attrs = new int[] { glowColorPressedAttrId, glowColorFocusedAttrId };
-            Arrays.sort(attrs);
-
-            TypedArray a = context.obtainStyledAttributes(attrs);
-            int n = attrs.length;
-            for (int i = 0; i < n; i++) {
-                int attr = attrs[i];
-                if (attr == glowColorPressedAttrId) {
-                    pressedColor = a.getColor(i, pressedColor);
-                } else if (attr == glowColorFocusedAttrId) {
-                    focusedColor = a.getColor(i, focusedColor);
-                }
-            }
-            a.recycle();
-        }
-
-        sGlowColorPressedPaint.setColor(pressedColor);
-        sGlowColorFocusedPaint.setColor(focusedColor);
     }
 
     static class BubbleText {
